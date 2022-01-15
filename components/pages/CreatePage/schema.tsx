@@ -9,9 +9,9 @@ export const FieldName = {
 
 export const defaultFieldValue: iFieldInput = {
   name: "",
-  roleID: 1,
-  power: 1,
-  wealth: 0,
+  roleID: "",
+  power: "",
+  wealth: "",
 };
 
 export const defaultFieldInputError: iFieldInputError = {

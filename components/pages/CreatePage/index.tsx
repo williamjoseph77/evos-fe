@@ -15,18 +15,13 @@ const CreatePage: NextPage = () => {
     useState<iFieldInput>(defaultFieldValue);
   const [error, setError] = useState<iFieldInputError>(defaultFieldInputError);
 
-  // useEffect(() => {
-  //   fetch(())
-  // })
-
   const validateInputs = useCallback(
     (currError: iFieldInputError, key: string, value: string | number) => {
+      if (!value) {
+        return { ...currError, [key]: "Field ini tidak boleh kosong" };
+      }
+
       switch (key) {
-        case FieldName.Name:
-          if (!value) {
-            return { ...currError, [key]: "Field ini tidak boleh kosong" };
-          }
-          break;
         case FieldName.RoleID:
           if (value < 1 || value > 2) {
             return { ...currError, [key]: "Value harus 1 atau 2" };

@@ -1,8 +1,8 @@
 export interface iFieldInput {
   name: string;
-  roleID: number;
-  wealth: number;
-  power: number;
+  roleID: string;
+  wealth: string;
+  power: string;
 }
 
 export interface iFieldInputError {
