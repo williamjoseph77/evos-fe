@@ -215,11 +215,9 @@ const CreatePage: NextPage = () => {
 
             return (
               <Fragment key={`Fragment-${index}`}>
-                <tr key={`Field-${index}`}></tr>
-                <tr key={`ErrorField-${index}`}>
+                <tr key={`Field-${index}`}>
                   {element}
-
-                  <td colSpan={2}>
+                  <td>
                     {error[e.fieldName as keyof iFieldInputError] && (
                       <div className={styles.errorContainer}>
                         {error[e.fieldName as keyof iFieldInputError]}

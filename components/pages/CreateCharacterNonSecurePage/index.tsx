@@ -155,9 +155,7 @@ const CreatePage: NextPage = () => {
                       max={e.max}
                     />
                   </td>
-                </tr>
-                <tr key={`ErrorField-${index}`}>
-                  <td colSpan={2}>
+                  <td>
                     {error[e.fieldName as keyof iFieldInputError] && (
                       <div className={styles.errorContainer}>
                         {error[e.fieldName as keyof iFieldInputError]}
