@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { ChangeEvent, Fragment, useCallback, useState } from "react";
+import { ChangeEvent, Fragment, useCallback, useEffect, useState } from "react";
 import {
   defaultFieldInputError,
   defaultFieldValue,
@@ -10,10 +10,47 @@ import {
 import styles from "./style.module.css";
 import { iFieldInput, iFieldInputError, iFormFields } from "./types";
 
+interface iGetRoleListResponse {
+  guid: string;
+  name: string;
+}
+
 const CreatePage: NextPage = () => {
   const [fieldValues, setFieldValues] =
     useState<iFieldInput>(defaultFieldValue);
+  const [roles, setRoles] = useState<iGetRoleListResponse[] | undefined>(
+    undefined
+  );
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<iFieldInputError>(defaultFieldInputError);
+
+  const fetchRoles = useCallback(async () => {
+    const getRolesRequest = new Request("http://localhost:8080/api/roles", {
+      method: "GET",
+      headers: new Headers({
+        "Content-Type": "application/json; charset=UTF-8",
+      }),
+    });
+    console.log("2");
+
+    await fetch(getRolesRequest)
+      .then((response) => {
+        console.log("res", response);
+        return response.json();
+      })
+      .then((data) => {
+        setRoles(data as iGetRoleListResponse[]);
+      })
+      .catch((e) => console.log(e));
+
+    setIsLoading(false);
+  }, []);
+
+  useEffect(() => {
+    console.log("1");
+    fetchRoles();
+    console.log("4");
+  }, [fetchRoles]);
 
   const validateInputs = useCallback(
     (currError: iFieldInputError, key: string, value: string | number) => {
@@ -22,11 +59,6 @@ const CreatePage: NextPage = () => {
       }
 
       switch (key) {
-        case FieldName.RoleID:
-          if (value < 1 || value > 2) {
-            return { ...currError, [key]: "Value harus 1 atau 2" };
-          }
-          break;
         case FieldName.Power:
           if (!(value > 0 && value < 100)) {
             return { ...currError, [key]: "Value harus diantara 0 dan 100" };
@@ -58,9 +90,9 @@ const CreatePage: NextPage = () => {
             [key]: e.target.value || defaultFieldValue.name,
           };
           break;
-        case FieldName.RoleID:
+        case FieldName.RoleGUID:
           currFieldValue = {
-            [key]: parseInt(e.target.value) || defaultFieldValue.roleID,
+            [key]: e.target.value || defaultFieldValue.roleGUID,
           };
           break;
         case FieldName.Power:
@@ -100,20 +132,17 @@ const CreatePage: NextPage = () => {
     });
 
     if (isError) {
+      console.log("error submit: ", currError);
       return;
     }
 
-    let request = new Request(
-      "http://localhost:8080/api/characters/non-secure",
-      {
-        mode: "no-cors",
-        method: "POST",
-        body: JSON.stringify(payload),
-        headers: new Headers({
-          "Content-Type": "application/json; charset=UTF-8",
-        }),
-      }
-    );
+    let request = new Request("http://localhost:8080/api/characters/secure", {
+      method: "POST",
+      body: JSON.stringify(payload),
+      headers: new Headers({
+        "Content-Type": "application/json; charset=UTF-8",
+      }),
+    });
 
     await fetch(request).then((response) => console.log("Success: ", response));
   }, [error, fieldValues, validateInputs]);
@@ -121,6 +150,8 @@ const CreatePage: NextPage = () => {
   const handleOnReset = useCallback(() => {
     setFieldValues(defaultFieldValue);
   }, []);
+
+  if (isLoading) return <div>Loading...</div>;
 
   return (
     <div className={styles.container}>
@@ -137,9 +168,36 @@ const CreatePage: NextPage = () => {
             </td>
           </tr>
           {formFields.map((e: iFormFields, index: number) => {
-            return (
-              <Fragment key={`Fragment-${index}`}>
-                <tr key={`Field-${index}`}>
+            let element;
+
+            if (e.fieldName === FieldName.RoleGUID) {
+              element = (
+                <>
+                  <td>
+                    <label htmlFor={e.fieldName}>{e.label}</label>
+                  </td>
+                  <td>
+                    {roles?.map((role, index) => {
+                      return (
+                        <Fragment key={`radio-${index}`}>
+                          <input
+                            type="radio"
+                            id={role.guid}
+                            name={e.fieldName}
+                            value={role.guid}
+                            onChange={handleOnChange}
+                            style={{ width: "unset" }}
+                          />
+                          <label htmlFor={role.guid}>{role.name}</label>
+                        </Fragment>
+                      );
+                    })}
+                  </td>
+                </>
+              );
+            } else {
+              element = (
+                <>
                   <td>
                     <label htmlFor={e.fieldName}>{e.label}</label>
                   </td>
@@ -155,8 +213,16 @@ const CreatePage: NextPage = () => {
                       max={e.max}
                     />
                   </td>
-                </tr>
+                </>
+              );
+            }
+
+            return (
+              <Fragment key={`Fragment-${index}`}>
+                <tr key={`Field-${index}`}></tr>
                 <tr key={`ErrorField-${index}`}>
+                  {element}
+
                   <td colSpan={2}>
                     {error[e.fieldName as keyof iFieldInputError] && (
                       <div className={styles.errorContainer}>

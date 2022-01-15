@@ -1,0 +1,22 @@
+.container {
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  align-items: center;
+}
+
+.formTitleContainer {
+  text-align: center;
+}
+
+.actionButtonContainer {
+  display: flex;
+  justify-content: right;
+  gap: 8px;
+}
+
+.errorContainer {
+  color: red;
+  font-size: 14px;
+  text-align: right;
+}
