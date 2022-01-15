@@ -100,6 +100,7 @@ const CreatePage: NextPage = () => {
     });
 
     if (isError) {
+      console.log("error submit: ", currError);
       return;
     }
 

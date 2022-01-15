@@ -31,11 +31,9 @@ const CreatePage: NextPage = () => {
         "Content-Type": "application/json; charset=UTF-8",
       }),
     });
-    console.log("2");
 
     await fetch(getRolesRequest)
       .then((response) => {
-        console.log("res", response);
         return response.json();
       })
       .then((data) => {
@@ -47,9 +45,7 @@ const CreatePage: NextPage = () => {
   }, []);
 
   useEffect(() => {
-    console.log("1");
     fetchRoles();
-    console.log("4");
   }, [fetchRoles]);
 
   const validateInputs = useCallback(
