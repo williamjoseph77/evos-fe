@@ -15,7 +15,7 @@ interface iGetRoleListResponse {
   name: string;
 }
 
-const CreateCharacterSecurePage: NextPage = () => {
+const GetCharacterListPage: NextPage = () => {
   const [fieldValues, setFieldValues] =
     useState<iFieldInput>(defaultFieldValue);
   const [roles, setRoles] = useState<iGetRoleListResponse[] | undefined>(
@@ -242,4 +242,4 @@ const CreateCharacterSecurePage: NextPage = () => {
   );
 };
 
-export default CreateCharacterSecurePage;
+export default GetCharacterListPage;

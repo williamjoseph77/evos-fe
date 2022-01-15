@@ -10,7 +10,7 @@ import {
 import styles from "./style.module.css";
 import { iFieldInput, iFieldInputError, iFormFields } from "./types";
 
-const CreatePage: NextPage = () => {
+const CreateCharacterNonSecurePage: NextPage = () => {
   const [fieldValues, setFieldValues] =
     useState<iFieldInput>(defaultFieldValue);
   const [error, setError] = useState<iFieldInputError>(defaultFieldInputError);
@@ -180,4 +180,4 @@ const CreatePage: NextPage = () => {
   );
 };
 
-export default CreatePage;
+export default CreateCharacterNonSecurePage;
