@@ -12,3 +12,7 @@
 .container a:first-child {
   margin-left: 10px;
 }
+
+.container a:last-child {
+  margin-right: 10px;
+}
