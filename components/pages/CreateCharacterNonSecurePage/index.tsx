@@ -104,7 +104,7 @@ const CreateCharacterNonSecurePage: NextPage = () => {
 
     setError(currError);
 
-    Object.entries(currError).forEach(([key, value]) => {
+    Object.entries(currError).forEach(([_, value]) => {
       if (value) {
         isError = true;
         return;
@@ -129,14 +129,15 @@ const CreateCharacterNonSecurePage: NextPage = () => {
       .then((data) => {
         setCreateResponse(data);
         handleOnReset();
-      });
+      })
+      .catch((e) => console.log(e));
   }, [error, fieldValues, handleOnReset, validateInputs]);
 
   return (
     <div className={styles.container}>
       <Head>
-        <title>Game</title>
-        <meta name="description" content="Game test for EVOS" />
+        <title>Create Character Non Secure</title>
+        <meta name="description" content="Create Character Non Secure" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <table>

@@ -156,16 +156,67 @@ const CreateCharacterSecurePage: NextPage = () => {
       .then((data) => {
         setCreateResponse(data);
         handleOnReset();
-      });
+      })
+      .catch((e) => console.log(e));
   }, [error, fieldValues, handleOnReset, validateInputs]);
+
+  const getFormElement = (e: iFormFields) => {
+    if (e.fieldName === FieldName.RoleGUID) {
+      return (
+        <>
+          <td>
+            <label htmlFor={e.fieldName}>{e.label}</label>
+          </td>
+          <td>
+            {roles?.map((role, index) => {
+              return (
+                <Fragment key={`radio-${index}`}>
+                  <input
+                    type="radio"
+                    id={role.guid}
+                    name={e.fieldName}
+                    value={role.guid}
+                    checked={fieldValues.roleGUID === role.guid}
+                    onChange={handleOnChange}
+                    style={{ width: "unset" }}
+                  />
+                  <label htmlFor={role.guid}>{role.name}</label>
+                </Fragment>
+              );
+            })}
+          </td>
+        </>
+      );
+    }
+
+    return (
+      <>
+        <td>
+          <label htmlFor={e.fieldName}>{e.label}</label>
+        </td>
+        <td>
+          <input
+            type={e.fieldType}
+            id={e.fieldId}
+            name={e.fieldName}
+            value={fieldValues[e.fieldName as keyof iFieldInput]}
+            onChange={handleOnChange}
+            step={e.step}
+            min={e.min}
+            max={e.max}
+          />
+        </td>
+      </>
+    );
+  };
 
   if (isLoading) return <div>Loading...</div>;
 
   return (
     <div className={styles.container}>
       <Head>
-        <title>Game</title>
-        <meta name="description" content="Game test for EVOS" />
+        <title>Create Character Secure</title>
+        <meta name="description" content="Create Character Secure" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <table>
@@ -176,55 +227,7 @@ const CreateCharacterSecurePage: NextPage = () => {
             </td>
           </tr>
           {formFields.map((e: iFormFields, index: number) => {
-            let element;
-
-            if (e.fieldName === FieldName.RoleGUID) {
-              element = (
-                <>
-                  <td>
-                    <label htmlFor={e.fieldName}>{e.label}</label>
-                  </td>
-                  <td>
-                    {roles?.map((role, index) => {
-                      return (
-                        <Fragment key={`radio-${index}`}>
-                          <input
-                            type="radio"
-                            id={role.guid}
-                            name={e.fieldName}
-                            value={role.guid}
-                            checked={fieldValues.roleGUID === role.guid}
-                            onChange={handleOnChange}
-                            style={{ width: "unset" }}
-                          />
-                          <label htmlFor={role.guid}>{role.name}</label>
-                        </Fragment>
-                      );
-                    })}
-                  </td>
-                </>
-              );
-            } else {
-              element = (
-                <>
-                  <td>
-                    <label htmlFor={e.fieldName}>{e.label}</label>
-                  </td>
-                  <td>
-                    <input
-                      type={e.fieldType}
-                      id={e.fieldId}
-                      name={e.fieldName}
-                      value={fieldValues[e.fieldName as keyof iFieldInput]}
-                      onChange={handleOnChange}
-                      step={e.step}
-                      min={e.min}
-                      max={e.max}
-                    />
-                  </td>
-                </>
-              );
-            }
+            const element = getFormElement(e);
 
             return (
               <Fragment key={`Fragment-${index}`}>

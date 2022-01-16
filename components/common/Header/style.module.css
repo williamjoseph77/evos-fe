@@ -1,0 +1,14 @@
+.container {
+  display: flex;
+  align-items: center;
+  background-color: lightblue;
+  height: 50px;
+}
+
+.container a {
+  margin: 5px;
+}
+
+.container a:first-child {
+  margin-left: 10px;
+}

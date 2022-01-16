@@ -1,23 +1,11 @@
-export interface iFieldInput {
+export interface iGetRoleListResponse {
+  guid: string;
   name: string;
-  roleGUID: string;
-  wealth: string;
-  power: string;
 }
-
-export interface iFieldInputError {
+export interface iGetCharacterListResponse {
+  guid: string;
   name: string;
-  roleGUID: string;
-  wealth: string;
-  power: string;
-}
-
-export interface iFormFields {
-  label: string;
-  fieldType: string;
-  fieldId: string;
-  fieldName: string;
-  step?: string;
-  min?: number;
-  max?: number;
+  power: number;
+  wealth: number;
+  role: iGetRoleListResponse;
 }
