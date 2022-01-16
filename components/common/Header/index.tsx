@@ -20,6 +20,11 @@ const Header: FC = () => {
           <button>Create Character Non Secure</button>
         </a>
       </Link>
+      <Link href={"/create/non-secure"}>
+        <a>
+          <button>Create Character No Validation</button>
+        </a>
+      </Link>
     </div>
   );
 };

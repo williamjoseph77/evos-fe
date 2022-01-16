@@ -1,0 +1,35 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
+
+.formTitleContainer {
+  text-align: center;
+}
+
+.actionButtonContainer {
+  display: flex;
+  justify-content: right;
+  gap: 8px;
+}
+
+.errorContainer {
+  color: red;
+  font-size: 14px;
+  text-align: right;
+}
+
+.successResponseContainer {
+  margin-top: 20px;
+  color: green;
+  font-weight: bold;
+}
+
+.failedResponseContainer {
+  margin-top: 20px;
+  color: red;
+  font-weight: bold;
+}
