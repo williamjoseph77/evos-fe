@@ -1,3 +1,3 @@
-import CreateCharacterNonSecurePage from "../../components/pages/CreateCharacterNonSecurePage";
+import CreateCharacterSecurePage from "../../components/pages/CreateCharacterSecurePage";
 
-export default CreateCharacterNonSecurePage;
+export default CreateCharacterSecurePage;

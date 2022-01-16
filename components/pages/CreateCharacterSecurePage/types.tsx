@@ -21,3 +21,13 @@ export interface iFormFields {
   min?: number;
   max?: number;
 }
+
+export interface iGetRoleListResponse {
+  guid: string;
+  name: string;
+}
+
+export interface iCreateCharacterSecureResponse {
+  guid?: string;
+  error?: string;
+}

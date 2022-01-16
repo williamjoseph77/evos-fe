@@ -21,3 +21,8 @@ export interface iFormFields {
   min?: number;
   max?: number;
 }
+
+export interface iCreateCharacterNonSecureResponse {
+  guid?: string;
+  error?: string;
+}

@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import { ChangeEvent, Fragment, useCallback, useState } from "react";
+import { createCharacterNonSecureURL } from "../../../services/api/url";
 import {
   defaultFieldInputError,
   defaultFieldValue,
@@ -8,12 +9,19 @@ import {
   formFields,
 } from "./schema";
 import styles from "./style.module.css";
-import { iFieldInput, iFieldInputError, iFormFields } from "./types";
+import {
+  iCreateCharacterNonSecureResponse,
+  iFieldInput,
+  iFieldInputError,
+  iFormFields,
+} from "./types";
 
 const CreateCharacterNonSecurePage: NextPage = () => {
   const [fieldValues, setFieldValues] =
     useState<iFieldInput>(defaultFieldValue);
   const [error, setError] = useState<iFieldInputError>(defaultFieldInputError);
+  const [createResponse, setCreateResponse] =
+    useState<iCreateCharacterNonSecureResponse>({});
 
   const validateInputs = useCallback(
     (currError: iFieldInputError, key: string, value: string | number) => {
@@ -23,7 +31,7 @@ const CreateCharacterNonSecurePage: NextPage = () => {
 
       switch (key) {
         case FieldName.RoleID:
-          if (value < 1 || value > 2) {
+          if (value !== 1 && value !== 2) {
             return { ...currError, [key]: "Value harus 1 atau 2" };
           }
           break;
@@ -80,6 +88,10 @@ const CreateCharacterNonSecurePage: NextPage = () => {
     [fieldValues]
   );
 
+  const handleOnReset = useCallback(() => {
+    setFieldValues(defaultFieldValue);
+  }, []);
+
   const handleSubmit = useCallback(async () => {
     const payload = { ...fieldValues };
     let isError = false;
@@ -104,23 +116,21 @@ const CreateCharacterNonSecurePage: NextPage = () => {
       return;
     }
 
-    let request = new Request(
-      "http://localhost:8080/api/characters/non-secure",
-      {
-        method: "POST",
-        body: JSON.stringify(payload),
-        headers: new Headers({
-          "Content-Type": "application/json; charset=UTF-8",
-        }),
-      }
-    );
+    let request = new Request(createCharacterNonSecureURL, {
+      method: "POST",
+      body: JSON.stringify(payload),
+      headers: new Headers({
+        "Content-Type": "application/json; charset=UTF-8",
+      }),
+    });
 
-    await fetch(request).then((response) => console.log("Success: ", response));
-  }, [error, fieldValues, validateInputs]);
-
-  const handleOnReset = useCallback(() => {
-    setFieldValues(defaultFieldValue);
-  }, []);
+    await fetch(request)
+      .then((response) => response.json())
+      .then((data) => {
+        setCreateResponse(data);
+        handleOnReset();
+      });
+  }, [error, fieldValues, handleOnReset, validateInputs]);
 
   return (
     <div className={styles.container}>
@@ -176,6 +186,16 @@ const CreateCharacterNonSecurePage: NextPage = () => {
           </tr>
         </tbody>
       </table>
+      {createResponse.guid && (
+        <div className={styles.successResponseContainer}>
+          Berhasil membuat character dengan guid {createResponse.guid}
+        </div>
+      )}
+      {createResponse.error && (
+        <div className={styles.failedResponseContainer}>
+          Error membuat karakter, {createResponse.error}, silakan coba lagi
+        </div>
+      )}
     </div>
   );
 };

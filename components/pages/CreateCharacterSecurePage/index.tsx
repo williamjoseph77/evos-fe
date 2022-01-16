@@ -2,30 +2,37 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import { ChangeEvent, Fragment, useCallback, useEffect, useState } from "react";
 import {
+  createCharacterSecureURL,
+  getRoleListURL,
+} from "../../../services/api/url";
+import {
   defaultFieldInputError,
   defaultFieldValue,
   FieldName,
   formFields,
 } from "./schema";
 import styles from "./style.module.css";
-import { iFieldInput, iFieldInputError, iFormFields } from "./types";
-
-interface iGetRoleListResponse {
-  guid: string;
-  name: string;
-}
+import {
+  iCreateCharacterSecureResponse,
+  iFieldInput,
+  iFieldInputError,
+  iFormFields,
+  iGetRoleListResponse,
+} from "./types";
 
 const CreateCharacterSecurePage: NextPage = () => {
   const [fieldValues, setFieldValues] =
     useState<iFieldInput>(defaultFieldValue);
+  const [error, setError] = useState<iFieldInputError>(defaultFieldInputError);
+  const [isLoading, setIsLoading] = useState(true);
   const [roles, setRoles] = useState<iGetRoleListResponse[] | undefined>(
     undefined
   );
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<iFieldInputError>(defaultFieldInputError);
+  const [createResponse, setCreateResponse] =
+    useState<iCreateCharacterSecureResponse>({});
 
   const fetchRoles = useCallback(async () => {
-    const getRolesRequest = new Request("http://localhost:8080/api/roles", {
+    const getRolesRequest = new Request(getRoleListURL, {
       method: "GET",
       headers: new Headers({
         "Content-Type": "application/json; charset=UTF-8",
@@ -108,6 +115,10 @@ const CreateCharacterSecurePage: NextPage = () => {
     [fieldValues]
   );
 
+  const handleOnReset = useCallback(() => {
+    setFieldValues(defaultFieldValue);
+  }, []);
+
   const handleSubmit = useCallback(async () => {
     const payload = { ...fieldValues };
     let isError = false;
@@ -132,7 +143,7 @@ const CreateCharacterSecurePage: NextPage = () => {
       return;
     }
 
-    let request = new Request("http://localhost:8080/api/characters/secure", {
+    let request = new Request(createCharacterSecureURL, {
       method: "POST",
       body: JSON.stringify(payload),
       headers: new Headers({
@@ -140,12 +151,13 @@ const CreateCharacterSecurePage: NextPage = () => {
       }),
     });
 
-    await fetch(request).then((response) => console.log("Success: ", response));
-  }, [error, fieldValues, validateInputs]);
-
-  const handleOnReset = useCallback(() => {
-    setFieldValues(defaultFieldValue);
-  }, []);
+    await fetch(request)
+      .then((response) => response.json())
+      .then((data) => {
+        setCreateResponse(data);
+        handleOnReset();
+      });
+  }, [error, fieldValues, handleOnReset, validateInputs]);
 
   if (isLoading) return <div>Loading...</div>;
 
@@ -181,6 +193,7 @@ const CreateCharacterSecurePage: NextPage = () => {
                             id={role.guid}
                             name={e.fieldName}
                             value={role.guid}
+                            checked={fieldValues.roleGUID === role.guid}
                             onChange={handleOnChange}
                             style={{ width: "unset" }}
                           />
@@ -238,6 +251,16 @@ const CreateCharacterSecurePage: NextPage = () => {
           </tr>
         </tbody>
       </table>
+      {createResponse.guid && (
+        <div className={styles.successResponseContainer}>
+          Berhasil membuat character dengan guid {createResponse.guid}
+        </div>
+      )}
+      {createResponse.error && (
+        <div className={styles.failedResponseContainer}>
+          Error membuat karakter, {createResponse.error}, silakan coba lagi
+        </div>
+      )}
     </div>
   );
 };
