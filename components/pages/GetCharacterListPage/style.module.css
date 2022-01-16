@@ -5,6 +5,10 @@
   flex: 1;
 }
 
+.emptyContainer {
+  text-align: center;
+}
+
 .characterListTableContainer {
   border-collapse: collapse;
 }
